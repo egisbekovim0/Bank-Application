@@ -19,15 +19,21 @@ FOR NO KEY UPDATE;
 
 -- name: ListAccounts :many
 SELECT * FROM accounts
-where owner = $1
 ORDER BY id
-limit $2
-offset $3;
+limit $1
+offset $2;
 
 -- name: UpdateAccount :one
 UPDATE accounts
   set balance = $2
 WHERE id = $1
+RETURNING *;
+
+
+-- name: AddAccountBalance :one
+UPDATE accounts
+SET balance = balance + sqlc.arg(amount)
+WHERE id = sqlc.arg(id)
 RETURNING *;
 
 -- name: DeleteAccount :exec
